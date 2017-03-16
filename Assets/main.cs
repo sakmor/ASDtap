@@ -11,6 +11,7 @@ public class main : MonoBehaviour
     GameObject dImage;
     GameObject countdownText;
     GameObject Canvas;
+    GameObject Jackie;
     public int gameTimeLength;
     int score;
     int answer;
@@ -28,9 +29,11 @@ public class main : MonoBehaviour
         aImage = GameObject.Find("aImage");
         sImage = GameObject.Find("sImage");
         dImage = GameObject.Find("dImage");
+        Jackie = GameObject.Find("Jackie");
         countdownText = GameObject.Find("countdownText");
         restartBtn = GameObject.Find("restartBtn");
 
+        Jackie.SetActive(false);                //隱藏踏錯圖示
         restartBtn.SetActive(false);            //隱藏重玩按鈕
         changeMap();                            //切換第一張關卡
     }
@@ -41,6 +44,8 @@ public class main : MonoBehaviour
         control();
         countdown();
     }
+
+    //切換地圖
     void changeMap()
     {
         //1、2、3，隨機跑一個結果作為可走得地方
@@ -66,6 +71,8 @@ public class main : MonoBehaviour
                 break;
         }
     }
+
+    //玩家的輸入
     void control()
     {
         if (isGameOver == false)
@@ -87,27 +94,38 @@ public class main : MonoBehaviour
             }
         }
     }
+
+    //判斷玩家的輸入
     void dected(int n)
     {
+        //如果輸入正確
         if (n == answer)
         {
+            //播放走路動作
             player.GetComponent<Animator>().Play("walk");
+            //加分
             score++;
+            //把分數顯示到遊戲畫面
             GameObject.Find("score").GetComponent<UnityEngine.UI.Text>().text = score.ToString("F0");
+            //換下一關
             changeMap();
         }
+        //如果輸入錯誤
         else
         {
+            //開啟踏錯圖示
+            Jackie.SetActive(true);
+            //遊戲結束
             gameOver();
         }
     }
+
+    //倒數計時用
     void countdown()
     {
-
         if (isGameOver == false)
         {
             float timeGO = gameTimeLength - (Time.time - startTime);
-
             countdownText.GetComponent<UnityEngine.UI.Text>().text = timeGO.ToString("F0");
 
             if (timeGO <= 0)
@@ -118,6 +136,8 @@ public class main : MonoBehaviour
 
 
     }
+
+    //遊戲結束
     void gameOver()
     {
         isGameOver = true;
@@ -125,8 +145,10 @@ public class main : MonoBehaviour
         restartBtn.SetActive(true);
     }
 
+    //重啟遊戲
     public void restart()
     {
+        Jackie.SetActive(false);                //隱藏踏錯圖示
         changeMap();
         isGameOver = false;
         startTime = Time.time;
